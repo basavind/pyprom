@@ -135,7 +135,6 @@ def make_yl_set(xl):
         A = a[0]
         B = a[1]
         for b in xl:
-
             if set(A).issubset(b[0]) and set(B).issubset(b[1]):
                 if a != b:
                     yl.discard(a)
@@ -162,11 +161,18 @@ def build_petrinet(tl, yl, ti, to, output_file):
     pn.node('start')
     pn.node('end')
 
+    underfitted, fitted, overfitted = check_fitting(yl)
+
     for elem in yl:
         for i in elem[0]:
             pn.edge(i, str(elem))
             pn.node(i, shape='box')
-            pn.node(str(elem), shape='circle')
+            color = 'green'
+            if elem in underfitted:
+                color = 'blue'
+            elif elem in overfitted:
+                color = 'red'
+            pn.node(str(elem), shape='circle', color=color)
         for i in elem[1]:
             pn.edge(str(elem), i)
             pn.node(i, shape='box')
@@ -175,3 +181,19 @@ def build_petrinet(tl, yl, ti, to, output_file):
     for o in to:
         pn.edge(o, 'end')
     pn.render(output_file)
+
+
+def check_fitting(yl):
+    underfitted = []
+    fitted = []
+    overfitted = []
+    for node in yl:
+        in_node, out_node = node
+        if len(in_node) == len(out_node):
+            fitted.append(node)
+        elif len(in_node) < len(out_node):
+            underfitted.append(node)
+        else:
+            overfitted.append(node)
+
+    return underfitted, fitted, overfitted
