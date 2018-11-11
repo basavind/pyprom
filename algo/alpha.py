@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # Module for Alpha Algorithm
 # https://en.wikipedia.org/wiki/Alpha_algorithm
-import graphviz as gv
 
 
 def apply(log, input_file, output_file):
@@ -29,7 +28,7 @@ def apply(log, input_file, output_file):
     print("initial tasks:", ti)
     print("terminal tasks:", to)
 
-    build_petrinet(tl, yl, ti, to, output_file)
+    return yl, ti, to
 
 
 def build_ordering_relations(log):
@@ -153,47 +152,3 @@ def make_to_set(log):
     to = set()
     [to.add(event[-1]) for event in log]
     return to
-
-
-def build_petrinet(tl, yl, ti, to, output_file):
-    pn = gv.Digraph(format='png')
-    pn.attr(rankdir='LR')  # left to righ layout - default is top down
-    pn.node('start')
-    pn.node('end')
-
-    underfitted, fitted, overfitted = check_fitting(yl)
-
-    for elem in yl:
-        for i in elem[0]:
-            pn.edge(i, str(elem))
-            pn.node(i, shape='box')
-            color = 'green'
-            if elem in underfitted:
-                color = 'blue'
-            elif elem in overfitted:
-                color = 'red'
-            pn.node(str(elem), shape='circle', color=color)
-        for i in elem[1]:
-            pn.edge(str(elem), i)
-            pn.node(i, shape='box')
-    for i in ti:
-        pn.edge('start', i)
-    for o in to:
-        pn.edge(o, 'end')
-    pn.render(output_file)
-
-
-def check_fitting(yl):
-    underfitted = []
-    fitted = []
-    overfitted = []
-    for node in yl:
-        in_node, out_node = node
-        if len(in_node) == len(out_node):
-            fitted.append(node)
-        elif len(in_node) < len(out_node):
-            underfitted.append(node)
-        else:
-            overfitted.append(node)
-
-    return underfitted, fitted, overfitted

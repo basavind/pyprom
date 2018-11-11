@@ -3,6 +3,7 @@ import shutil
 import sys
 import algo.alpha as alpha
 import logs
+import petrinet
 
 output_dir = "output"  # output folder name
 
@@ -19,7 +20,8 @@ def main(argv):
 
     print(log, input_file, output_file)
 
-    alpha.apply(log, input_file, output_file)
+    yl, ti, to = alpha.apply(log, input_file, output_file)
+    petrinet.build(yl, ti, to, output_file)
 
 
 if __name__ == "__main__":
