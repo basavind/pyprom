@@ -1,7 +1,7 @@
 import os
 import shutil
 import sys
-from algo import alpha
+import algo.alpha as alpha
 
 
 def main(argv):
@@ -23,12 +23,12 @@ def main(argv):
     output_file = os.path.splitext(output_dir +
                                    "/" + os.path.basename(argv[1]))[0]
     with open(input_file, "r") as f:
-            for line in f.readlines():
-                line = line.split()
-                if line not in log:  # some sequence only counts once
-                    log.append(line)
+        for line in f.readlines():
+            line = line.split()
+            if line not in log:  # some sequence only counts once
+                log.append(line)
 
-    print log, input_file, output_file
+    print(log, input_file, output_file)
 
     alpha.apply(log, input_file, output_file)
 
