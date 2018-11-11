@@ -4,6 +4,7 @@ import sys
 import algo.alpha as alpha
 import logs
 import petrinet
+from algo.fitting import mark_fitting
 
 output_dir = "output"  # output folder name
 
@@ -20,8 +21,13 @@ def main(argv):
 
     print(log, input_file, output_file)
 
-    yl, ti, to = alpha.apply(log, input_file, output_file)
-    petrinet.build(yl, ti, to, output_file)
+    places, initial_activities, terminal_activities = \
+        alpha.apply(log, input_file, output_file)
+
+    places = mark_fitting(places)
+
+    petrinet.build(places, initial_activities,
+                   terminal_activities, output_file)
 
 
 if __name__ == "__main__":
